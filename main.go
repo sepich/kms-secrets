@@ -19,6 +19,7 @@ package main
 import (
 	"flag"
 	"os"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -46,13 +47,30 @@ func init() {
 func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
+	var namespaced bool
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
+	flag.BoolVar(&namespaced, "namespaced", false, "Only watch KMSSecret in the current namespace")
 	flag.Parse()
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
+
+	ns := ""
+	if namespaced {
+		ns = os.Getenv("POD_NAMESPACE")
+		if len(ns) == 0 {
+			// Fall back to the namespace associated with the service account token, if available
+			if data, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace"); err == nil {
+				ns = strings.TrimSpace(string(data))
+			}
+		}
+		if len(ns) == 0 {
+			setupLog.Error(nil, "Mode is namespaced, but unable to determine own namespace name, please set env 'POD_NAMESPACE'")
+			os.Exit(1)
+		}
+	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             scheme,
@@ -60,6 +78,7 @@ func main() {
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
 		LeaderElectionID:   "e976aec6.h3poteto.dev",
+		Namespace:          ns,
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -69,7 +88,7 @@ func main() {
 	if err = (&controllers.KMSSecretReconciler{
 		Client:   mgr.GetClient(),
 		Log:      ctrl.Log.WithName("controllers").WithName("KMSSecret"),
-		Recorder: mgr.GetEventRecorderFor("mks-secret"),
+		Recorder: mgr.GetEventRecorderFor("kms-secret"),
 		Scheme:   mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "KMSSecret")

@@ -1,15 +1,7 @@
-[![Build](https://github.com/h3poteto/kms-secrets/workflows/Build/badge.svg)](https://github.com/h3poteto/kms-secrets/actions?query=workflow%3ABuild+branch%3Amaster)
-[![E2E](https://github.com/h3poteto/kms-secrets/workflows/E2E/badge.svg)](https://github.com/h3poteto/kms-secrets/actions?query=workflow%3AE2E+branch%3Amaster)
-[![Docker](https://github.com/h3poteto/kms-secrets/workflows/Docker/badge.svg)](https://github.com/h3poteto/kms-secrets/actions?query=workflow%3ADocker+branch%3Amaster)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/h3poteto/kms-secrets)](https://github.com/h3poteto/kms-secrets/releases)
-[![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com)
-
 # KMS Secrets
-
 KMS Secrets is custom controller for Kubernetes. This controller decrypts AWS KMS encrypted data and generate Secret resources. So you can apply KMS encrypted data definitions as it is.
 
-## !Announcement
-This project has completed its role. Currently, we recommend other projects that are more convenient and easy to use, e.g. [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) or [external-secrets](https://github.com/external-secrets/external-secrets).
+This is a fork of [h3poteto/kms-secrets](github.com/h3poteto/kms-secrets) with added ability to run in "single namespace" mode.
 
 ## Overview
 Sometimes you don't want to commit Secret resources to Git as is, because Secret has raw (base64 encoded) strings.
@@ -53,7 +45,7 @@ In this time, please provide KMS encrypted strings in `encryptedData`. You can g
 Here is an example using aws-cli.
 
 ```
-$ aws kms encrypt --key-id 1asdf3-rsdf... --plaintext "apikey" --query CiphertextBlob --output text
+$ aws kms encrypt --key-id 1asdf3-rsdf... --plaintext "$(echo -n apikey | base64)" --query CiphertextBlob --output text
 AQICAHh2iCEGE2e6vdC+w6dQ4hRIyahEPE...
 ```
 
@@ -108,7 +100,7 @@ And please refer configuration on [chart repository](https://github.com/h3poteto
 
 ### Kustomize
 Kustomize template is in [config](/config/default).
-You can use `kucectl` has native support for [kustomize](https://kustomize.io/).
+You can use `kubectl` has native support for [kustomize](https://kustomize.io/).
 
 ```
 $ git clone https://github.com/h3poteto/kms-secrets.git

@@ -1,5 +1,5 @@
 domain: h3poteto.dev
-repo: github.com/h3poteto/kms-secrets
+repo: github.com/sepich/kms-secrets
 resources:
 - group: secret
   kind: KMSSecret

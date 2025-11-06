@@ -1,6 +1,5 @@
-
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= sepa/kms-secrets:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd"
 
@@ -11,18 +10,19 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
-all: manager
-
 # Run tests
-test: generate fmt vet manifests
+test: fmt vet
+	go test ./controllers -coverprofile cover.out
+
+e2e:
 	go test ./... -coverprofile cover.out
 
 # Build manager binary
-manager: generate fmt vet
-	go build -o bin/manager main.go
+build: test
+	CGO_ENABLED=0 GO111MODULE=on go build -a -o kms-secrets main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
-run: generate fmt vet manifests
+run: fmt vet
 	go run ./main.go
 
 # Install CRDs into a cluster
@@ -55,7 +55,7 @@ generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
 # Build the docker image
-docker-build: test
+docker: test
 	docker build . -t ${IMG}
 
 # Push the docker image
