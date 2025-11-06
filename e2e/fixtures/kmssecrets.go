@@ -1,7 +1,7 @@
 package fixtures
 
 import (
-	secretv1beta1 "github.com/h3poteto/kms-secrets/api/v1beta1"
+	secretv1beta1 "github.com/sepich/kms-secrets/api/v1beta1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

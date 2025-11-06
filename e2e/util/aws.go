@@ -1,22 +1,25 @@
 package util
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/kms"
+	"context"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/kms"
 )
 
 // EncryptString encrypts a string using provided KMSKeyID.
 func EncryptString(str, keyID, region string) ([]byte, error) {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
-	svc := kms.New(sess, aws.NewConfig().WithRegion(region))
+	ctx := context.Background()
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
+	if err != nil {
+		return nil, err
+	}
+	svc := kms.NewFromConfig(cfg)
 	input := &kms.EncryptInput{
-		KeyId:     aws.String(keyID),
+		KeyId:     &keyID,
 		Plaintext: []byte(str),
 	}
-	res, err := svc.Encrypt(input)
+	res, err := svc.Encrypt(ctx, input)
 	if err != nil {
 		return nil, err
 	}

@@ -56,11 +56,11 @@ generate: controller-gen
 
 # Build the docker image
 docker: test
-	docker build . -t ${IMG}
+	docker build --platform linux/amd64 . -t ${IMG}
 
 # Push the docker image
 docker-push:
-	docker push ${IMG}
+	docker push --platform linux/amd64 ${IMG}
 
 # find or download controller-gen
 # download controller-gen if necessary

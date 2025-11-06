@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	secretv1beta1 "github.com/h3poteto/kms-secrets/api/v1beta1"
-	"github.com/h3poteto/kms-secrets/e2e/fixtures"
-	"github.com/h3poteto/kms-secrets/e2e/util"
+	secretv1beta1 "github.com/sepich/kms-secrets/api/v1beta1"
+	"github.com/sepich/kms-secrets/e2e/fixtures"
+	"github.com/sepich/kms-secrets/e2e/util"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

@@ -84,8 +84,6 @@ metadata:
 type: Opaque
 ```
 
-
-
 ## How to install
 ### Helm
 
@@ -103,7 +101,7 @@ Kustomize template is in [config](/config/default).
 You can use `kubectl` has native support for [kustomize](https://kustomize.io/).
 
 ```
-$ git clone https://github.com/h3poteto/kms-secrets.git
+$ git clone https://github.com/sepich/kms-secrets.git
 $ cd kms-secrets
 $ kubectl apply -k config/default
 ```
