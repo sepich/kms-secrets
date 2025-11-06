@@ -37,6 +37,7 @@ type KMSSecretSpec struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Type:=string
 	Region string `json:"region"`
+	Type   string `json:"type"`
 }
 
 // KMSSecretStatus defines the observed state of KMSSecret

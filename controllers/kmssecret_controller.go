@@ -129,6 +129,10 @@ func (r *KMSSecretReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func buildSecret(kind secretv1beta1.KMSSecret, decryptedData map[string][]byte) *corev1.Secret {
+	t := kind.Spec.Type
+	if t == "" {
+		t = string(corev1.SecretTypeOpaque)
+	}
 	secret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:            kind.Name,
@@ -138,7 +142,7 @@ func buildSecret(kind secretv1beta1.KMSSecret, decryptedData map[string][]byte) 
 			Annotations:     kind.Spec.Template.GetAnnotations(),
 		},
 		Data: decryptedData,
-		Type: corev1.SecretTypeOpaque,
+		Type: corev1.SecretType(t),
 	}
 	return &secret
 }

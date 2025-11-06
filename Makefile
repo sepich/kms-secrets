@@ -60,7 +60,7 @@ docker: test
 
 # Push the docker image
 docker-push:
-	docker push --platform linux/amd64 ${IMG}
+	docker push ${IMG}
 
 # find or download controller-gen
 # download controller-gen if necessary
